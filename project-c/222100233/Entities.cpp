@@ -17,9 +17,19 @@ void read_events(){
     Json::Value root;
     if (!reader.parse(ifs,root)){
         throw "add_event parse json error\n";
+    }                        
+    root=(root["Sports"])[0]["DisciplineList"];//是个数组
+    // 遍历整个keys,只取出正赛的id和姓名关系
+    for(int i=0;i<root.size();i++){
+        auto e=root[i];
+        event.insert(std::pair((root[i])["DisciplineName"].asString(),
+        root[i]["Id"].asString()));
     }
-    auto test=root.toStyledString();
-    std::cout<<test<<std::endl;
+    for (auto i : event)
+    {
+        std::cout<<i.first<<' '<<i.second<<'\n';
+    }
+    // std::cout<<root.toStyledString();
     ifs.close();
 }
 void read_players(){
