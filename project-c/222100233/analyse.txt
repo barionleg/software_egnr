@@ -1,0 +1,10 @@
+main：
+通过argc argv取出文件名;
+while循环读取in中的指令序列,对于每一条指令:
+    执行查询;
+    追加到文件;
+
+Entity：
+类似orm,把json文件数据转换为cpp对象。
+player task match
+
