@@ -1,8 +1,11 @@
 #pragma once
 #include <json/json.h>
+#include <json/reader.h>
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <map>
+
 using std::string;
 using std::vector;
 using std::map;
@@ -47,7 +50,7 @@ class Task
 {
 private:
     string name;
-    Phase phases[3];
+    Phase* phases;
 
 public:
     Task(Phase *phase, string name);
@@ -63,4 +66,5 @@ private:
 public:
     string get_info();
     Phase(Json::Value heat);
+    Phase();
 };

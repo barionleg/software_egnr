@@ -1,11 +1,11 @@
-#ifndef event_json_path
-    #define event_json_path ./datas/event.json
+#ifndef EVENT_JSON_PATH
+    #define EVENT_JSON_PATH "./datas/event.json"
 #endif
 
-#ifndef athelets_json_path
-    #define athelets_json_path ./datas/athelets.json
+#ifndef ATHELETS_JSON_PATH
+    #define ATHELETS_JSON_PATH "./datas/athelets.json"
 #endif
 
-#ifndef results_json_path
-    #define results_json_path ./datas/results
+#ifndef RESULTS_JSON_DIR
+    #define RESULTS_JSON_DIR "./datas/results"
 #endif
