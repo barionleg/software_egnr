@@ -35,6 +35,7 @@ public:
     string firstName;
     string lastName;
     string country;
+    string gender;
     Player(string firstName, string lastName, string country);
     Player(Json::Value& participation);
     string get_info();

@@ -2,6 +2,8 @@
 #include "settings.h"
 using std::ifstream;
 
+//这些理论上来说封装一下的好
+//但是按c风格就无所谓,反正最后要打包成库
 vector<Player> player_list;
 vector<Task> task_list;
 map<string,string> event;
@@ -85,10 +87,12 @@ Player::Player(string firstName, string lastName, string country)
     this->lastName = lastName;
     this->country = country;
 }
+
 Player::Player(Json::Value& participant){
     this->country=participant["NAT"].asString();
     this->firstName=participant["PreferredFirstName"].asString();   
     this->lastName=participant["PreferredLastName"].asString();
+    this->gender=participant["Gender"].asString();
 }
 
 Task::Task(Json::Value& task_root){
