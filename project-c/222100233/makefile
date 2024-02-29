@@ -22,10 +22,9 @@ commit:
 	git commit $(GITADDR)project-c
 
 #测试
-test:test.cpp
+test:$(TEST_DEPENDENCY)
 	rm -f test
 	g++ $(TEST_DEPENDENCY) -g -o test -l$(LIB) -I./
-	./test
 
 clean:
 	rm -f app test

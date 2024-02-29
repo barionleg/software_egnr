@@ -3,9 +3,9 @@
 #endif
 
 #ifndef ATHELETS_JSON_PATH
-    #define ATHELETS_JSON_PATH "./datas/athelets.json"
+    #define ATHELETS_JSON_PATH "./datas/athletes.json"
 #endif
 
 #ifndef RESULTS_JSON_DIR
-    #define RESULTS_JSON_DIR "./datas/results"
+    #define RESULTS_JSON_DIR "./datas/results/"
 #endif

@@ -14,29 +14,27 @@ class Player;
 class Heat;
 class Task;
 
-#if !defined(FINALS)
-#define FINALS 3
+
+#if !defined(FINAL)
+#define FINAL 2
 #endif // FINALS
-#if !defined(SEMIFINALS)
-#define SEMIFINALS 2
+#if !defined(SEMIFINAL)
+#define SEMIFINAL 1
 #endif // SEMIFINALS
-#if !defined(PRELIMINARIES)
-#define PRELIMINARIES 1
+#if !defined(PRELIMINARIE)
+#define PRELIMINARY 0
 #endif // PRELIMINARIES
 
 
 //event记录映射关 2需要一个添加键值对的函数
-void add_event(map<string,string>& event,Json::Value& value);//添加映射关系
 void read_jsons();//读取json文件到内存
 
 class Player
 {
-private:
+public:
     string firstName;
     string lastName;
     string country;
-
-public:
     Player(string firstName, string lastName, string country);
     Player(Json::Value& participation);
     string get_info();
@@ -50,28 +48,28 @@ struct Score
     vector<double> score_per_dive;
     double total;
     string get_info();
+    void print();
     Score(Json::Value& score_json);
 };
 
 class Task
 {
-private:
+public:
     string name;
     vector<Heat> heats;
-
-public:
     Task(Heat *heat, string name);
     Task(Json::Value& task_root);
-    string get_info();
+    void print();
 };
 
 class Heat
 {
-private:
+public:
     vector<Score> record;
     string name;
 public:
-    string get_info();
+    void print();
     Heat(Json::Value& heat_json);
+    Heat(string name);
     Heat();
 };

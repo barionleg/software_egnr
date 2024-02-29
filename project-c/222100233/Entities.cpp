@@ -6,17 +6,13 @@ vector<Player> player_list;
 vector<Task> task_list;
 map<string,string> event;
 
-
-void add_event(map<string,string>& event,Json::Value& value){
-    
-}
 void read_events(){
     ifstream ifs;
     ifs.open(EVENT_JSON_PATH,std::ios_base::in);
     Json::Reader reader;
     Json::Value root;
     if (!reader.parse(ifs,root)){
-        throw "add_event parse json error\n";
+        std::cerr<<   "##add_event parse json error\n";
     }                        
     root=(root["Sports"])[0]["DisciplineList"];//是个数组
     // 遍历整个keys,只取出正赛的id和姓名关系
@@ -25,10 +21,10 @@ void read_events(){
         event.insert(std::pair((root[i])["DisciplineName"].asString(),
         root[i]["Id"].asString()));
     }
-    for (auto i : event)
-    {
-        std::cout<<i.first<<' '<<i.second<<'\n';
-    }
+    // for (auto i : event)
+    // {
+    //     std::cout<<i.first<<' '<<i.second<<'\n';
+    // }
     // std::cout<<root.toStyledString();
     //我不知道为什么有一个test,删掉好了
     
@@ -40,37 +36,41 @@ void read_players(){
     Json::Reader reader;
     Json::Value root;
     if (!reader.parse(ifs,root)){
-        throw "add_player parse json error\n";
+        std::cerr<<   "###add_player parse json error\n";
     }                        
     for (int i = 0; i < root.size(); i++)//循环的是国家
     {
         auto participants=root[i]["Participations"];
-        for (int j = 0; j < participants.size(); i++)
+        
+        for (int j = 0; j < participants.size(); j++)
         {
             auto participant=participants[j];
             player_list.push_back(Player(participant));
         }
-        
     }
     ifs.close ();
 }
 void read_tasks(){
-    ifstream ifs;
+   
     for (auto it=event.begin(); it != event.end(); it++)
-    {
+    { 
+        ifstream ifs;
         //通过event映射找出文件名和比赛的对应关系
         string fileId=it->second;
-        ifs.open(RESULTS_JSON_DIR+fileId,std::ios_base::in);
+        string json_addr=RESULTS_JSON_DIR+fileId+".json";
+        ifs.open(json_addr,std::ios_base::in);
         Json::Reader reader;
         Json::Value root;
         if (!reader.parse(ifs,root)){
-            std::cerr<<it->first<<" no such file\n";
+            std::cerr<<"###"<<json_addr<<" no such file\n";
         }
         task_list.push_back(Task(root));
+        ifs.close();
     }
     
-    
+    task_list[1].print();  
 }
+
 
 void read_jsons(){
     read_events();
@@ -101,20 +101,37 @@ Task::Task(Json::Value& task_root){
         string heat_name=heats_json[i]["Name"].asString();
         Heat heat=Heat(heats_json[i]);//一个heat
         //添加到task中
-        if (heat_name=="Finals")
+        if (heat_name=="Final")
         {
-            this->heats[FINALS]=heat;
+            this->heats[FINAL]=heat;
         }
-        else if(heat_name=="Semifinals"){
-            this->heats[SEMIFINALS]=heat;
+        else if(heat_name=="Semifinal"){
+            this->heats[SEMIFINAL]=heat;
         }
-        else if(heat_name=="Preliminaries"){
-            this->heats[PRELIMINARIES]=heat;
+        else if(heat_name=="Preliminary"){
+            this->heats[PRELIMINARY]=heat;
         }
         else
-            throw "heat name unkonwn";
+            std::cerr<<  "###heat name unkonwn";
     }
     
+}
+
+void Task::print(){
+    std::cout<<this->name<<"\n";
+    for (auto heat : this->heats)
+    {
+        heat.print();
+    }
+    printf("----------------------\n");
+}
+
+Heat::Heat(string name){
+    this->name=name;
+}
+
+Heat::Heat(){
+    this->name="null";
 }
 
 Heat::Heat(Json::Value& heat_json){
@@ -126,16 +143,35 @@ Heat::Heat(Json::Value& heat_json){
     }
 }
 
+void Heat::print(){
+    std::cout<<'@'<<this->name<<'\n';
+    for (auto score : this->record)
+    {
+        score.print();
+    }
+}
+
 Score::Score(Json::Value& score_json){
-    this->total=score_json["TotalPoints"].asDouble();
+    
+    this->total=std::stod(score_json["TotalPoints"].asString());
     auto dives_json=score_json["Dives"];
-    //
     for (int i = 0; i < dives_json.size(); i++)
     {
-        auto points=dives_json[i]["DivePoints"].asDouble();
-        this->score_per_dive.push_back(points);
+        auto points=dives_json[i]["DivePoints"].asString();
+        this->score_per_dive.push_back(std::stod(points));
     }
     this->rank=score_json["Rank"].asInt();
     this->competitor_name=score_json["FullName"].asString();
     this->rank=score_json["Rank"].asInt();
+}
+
+void Score::print(){
+    std::cout<<this->competitor_name<<'\n';
+    std::cout<<"Rank:"<<this->rank<<'\n';
+    for (auto score : this->score_per_dive)
+    {
+        std::cout<<score<<' ';
+    }
+    std::cout<<'\n';
+    std::cout<<'Total Score:'<<this->total<<'\n';    
 }
