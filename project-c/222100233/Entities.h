@@ -11,18 +11,23 @@ using std::vector;
 using std::map;
 using std::pair;
 class Player;
-class Phase;
+class Heat;
 class Task;
-//event记录映射关系,需要一个添加键值对的函数
+
+#if !defined(FINALS)
+#define FINALS 3
+#endif // FINALS
+#if !defined(SEMIFINALS)
+#define SEMIFINALS 2
+#endif // SEMIFINALS
+#if !defined(PRELIMINARIES)
+#define PRELIMINARIES 1
+#endif // PRELIMINARIES
+
+
+//event记录映射关 2需要一个添加键值对的函数
 void add_event(map<string,string>& event,Json::Value& value);//添加映射关系
 void read_jsons();//读取json文件到内存
-
-enum Phases
-{
-    Pre,
-    Semi,
-    Final
-};
 
 class Player
 {
@@ -33,7 +38,7 @@ private:
 
 public:
     Player(string firstName, string lastName, string country);
-    Player(Json::Value participation);
+    Player(Json::Value& participation);
     string get_info();
     
 };
@@ -42,29 +47,31 @@ struct Score
 {
     string competitor_name;
     int rank;
-    double score_per_judge[7];
+    vector<double> score_per_dive;
+    double total;
     string get_info();
+    Score(Json::Value& score_json);
 };
 
 class Task
 {
 private:
     string name;
-    Phase* phases;
+    vector<Heat> heats;
 
 public:
-    Task(Phase *phase, string name);
-    Task(Json::Value result);
+    Task(Heat *heat, string name);
+    Task(Json::Value& task_root);
     string get_info();
 };
 
-class Phase
+class Heat
 {
 private:
     vector<Score> record;
-
+    string name;
 public:
     string get_info();
-    Phase(Json::Value heat);
-    Phase();
+    Heat(Json::Value& heat_json);
+    Heat();
 };
