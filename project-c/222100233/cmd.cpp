@@ -15,5 +15,9 @@ string cmd_players(const ofstream& out){
     }
     
 }
-string cmd_task();
-string cmd_task_detail();
+string cmd_task(){
+
+}
+string cmd_task_detail(){
+    
+}
