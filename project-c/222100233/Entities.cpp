@@ -1,13 +1,16 @@
 #include "Entities.h"
 #include "settings.h"
+#include "cmd.h"
 using std::ifstream;
 
 //这些理论上来说封装一下的好
 //但是按c风格就无所谓,反正最后要打包成库
 vector<Player> player_list;
 vector<Task> task_list;
+//可以的话我也不想存那么多映射关系
 map<string,string> event;
-
+map<string,vector<Score&>> player_score;
+map<string,string> task_player;
 void read_events(){
     ifstream ifs;
     ifs.open(EVENT_JSON_PATH,std::ios_base::in);
@@ -23,12 +26,6 @@ void read_events(){
         event.insert(std::pair((root[i])["DisciplineName"].asString(),
         root[i]["Id"].asString()));
     }
-    // for (auto i : event)
-    // {
-    //     std::cout<<i.first<<' '<<i.second<<'\n';
-    // }
-    // std::cout<<root.toStyledString();
-    //我不知道为什么有一个test,删掉好了
     
     ifs.close();
 }
@@ -42,7 +39,7 @@ void read_players(){
     }                        
     for (int i = 0; i < root.size(); i++)//循环的是国家
     {
-        auto participants=root[i]["Participations"];
+        auto participants=root[i]["player_score"];
         
         for (int j = 0; j < participants.size(); j++)
         {
@@ -78,6 +75,7 @@ void read_jsons(){
     read_events();
     read_players();
     read_tasks();
+    organize_maps();
 }
 
 
@@ -103,7 +101,7 @@ Task::Task(Json::Value& task_root){
     for (int i = 0; i < heats_json.size(); i++)
     {
         string heat_name=heats_json[i]["Name"].asString();
-        Heat heat=Heat(heats_json[i]);//一个heat
+        Heat heat=Heat(heats_json[i],this);//一个heat
         //添加到task中
         if (heat_name=="Final")
         {
@@ -116,9 +114,8 @@ Task::Task(Json::Value& task_root){
             this->heats[PRELIMINARY]=heat;
         }
         else
-            std::cerr<<  "###heat name unkonwn";
+            std::cerr<<"###heat name unkonwn";
     }
-    
 }
 
 void Task::print(){
@@ -130,20 +127,21 @@ void Task::print(){
     printf("----------------------\n");
 }
 
-Heat::Heat(string name){
+Heat::Heat(string name,Task* parent){
     this->name=name;
+    this->parent=parent;
 }
 
 Heat::Heat(){
     this->name="null";
 }
 
-Heat::Heat(Json::Value& heat_json){
+Heat::Heat(Json::Value& heat_json,Task* parent){
     this->name=heat_json["Name"].asString();
     auto result_json=heat_json["Results"];
     for (int i = 0; i < result_json.size(); i++)
     {
-        this->record.push_back(Score(result_json[i]));
+        this->record.push_back(Score(result_json[i],this));
     }
 }
 
@@ -155,9 +153,9 @@ void Heat::print(){
     }
 }
 
-Score::Score(Json::Value& score_json){
-    
+Score::Score(Json::Value& score_json,Heat* parent){
     this->total=std::stod(score_json["TotalPoints"].asString());
+    this->parent=parent;
     auto dives_json=score_json["Dives"];
     for (int i = 0; i < dives_json.size(); i++)
     {
@@ -167,6 +165,9 @@ Score::Score(Json::Value& score_json){
     this->rank=score_json["Rank"].asInt();
     this->competitor_name=score_json["FullName"].asString();
     this->rank=score_json["Rank"].asInt();
+    //插入全局变量
+    inser_player_scores(this->competitor_name,*this);
+    insert_task_player(this->competitor_name,this->parent->parent->name);
 }
 
 void Score::print(){
@@ -178,4 +179,14 @@ void Score::print(){
     }
     std::cout<<'\n';
     std::cout<<'Total Score:'<<this->total<<'\n';    
+}
+
+void inser_player_scores(string participant_name,Score& score){
+    vector<Score&> player_scores;
+    player_scores.push_back(score);
+    player_score.insert_or_assign(participant_name,player_scores);
+}
+
+void insert_task_player(string player,string task){
+    task_player.insert_or_assign(task,player);
 }

@@ -45,12 +45,13 @@ public:
 struct Score
 {
     string competitor_name;
+    Heat* parent;
     int rank;
     vector<double> score_per_dive;
     double total;
     string get_info();
     void print();
-    Score(Json::Value& score_json);
+    Score(Json::Value& score_json,Heat* parent);
 };
 
 class Task
@@ -68,9 +69,10 @@ class Heat
 public:
     vector<Score> record;
     string name;
+    Task* parent;
 public:
     void print();
-    Heat(Json::Value& heat_json);
-    Heat(string name);
+    Heat(Json::Value& heat_json,Task* parent);
+    Heat(string name,Task* parent);
     Heat();
 };
