@@ -10,33 +10,8 @@ using std::endl;
 using std::ofstream;
 using std::endl;
 using namespace cmd_output;
-void cmd_players(ofstream& ofs){
-    for (size_t i=0;i<player_list.size();i++)
-    {
-        Player& player=player_list[i];
-        // cout<<"Full Name:"<<player.firstName<<' '<<player.lastName<<endl;
-        // cout<<"Gender:"<<player.gender<<endl;
-        // cout<<"Country:"<<player.country<<endl;
-        // cout<<"-----------------"<<endl;
-        ofs<<"Full Name:"<<player.firstName<<' '<<player.lastName<<endl;
-        ofs<<"Gender:"<<player.gender<<endl;
-        ofs<<"Country:"<<player.country<<endl;
-        ofs<<"-----------------"<<endl;
-    }
-    
-}
 
-Task* find_task_by_name(string& task_name){
-    for (size_t i = 0; i < task_list.size(); i++)
-    {
-        if (task_list[i].name==task_name)
-        {
-            return &task_list[i];
-        }
-    }
-    return NULL;
-}
-
+Task* find_task_by_name(string& task_name);
 
 void cmd_result(ofstream& ofs, string& taks_name){
     vector<cmd_output::Result> res;
@@ -73,7 +48,7 @@ void cmd_result(ofstream& ofs, string& taks_name){
     std::sort(res.begin(),res.end(),[](const cmd_output::Result& r1,const cmd_output::Result& r2){
         return r1.rank<r2.rank;
     });
-
+    //输出
     for (auto r : res)
     {
         // ofs<<r.player_name<<endl;
@@ -85,8 +60,35 @@ void cmd_result(ofstream& ofs, string& taks_name){
         cout<<r.total_score<<endl;
         cout<<"------------\n";
     }
+}
+
+void cmd_players(ofstream& ofs){
+    for (size_t i=0;i<player_list.size();i++)
+    {
+        Player& player=player_list[i];
+        // cout<<"Full Name:"<<player.firstName<<' '<<player.lastName<<endl;
+        // cout<<"Gender:"<<player.gender<<endl;
+        // cout<<"Country:"<<player.country<<endl;
+        // cout<<"-----------------"<<endl;
+        ofs<<"Full Name:"<<player.firstName<<' '<<player.lastName<<endl;
+        ofs<<"Gender:"<<player.gender<<endl;
+        ofs<<"Country:"<<player.country<<endl;
+        ofs<<"-----------------"<<endl;
+    }
     
 }
+
+Task* find_task_by_name(string& task_name){
+    for (size_t i = 0; i < task_list.size(); i++)
+    {
+        if (task_list[i].name==task_name)
+        {
+            return &task_list[i];
+        }
+    }
+    return NULL;
+}
+
 
 void cmd_error(ofstream& ofs){
     ofs<<"Error\n";
