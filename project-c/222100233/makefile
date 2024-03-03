@@ -1,6 +1,6 @@
 G=g++
-SOURCEFILE= Entities.cpp  main.cpp Service.cpp cmd.cpp
-TEST_DEPENDENCY=test.cpp Entities.cpp Service.cpp cmd.cpp
+SOURCEFILE= Entities.cpp  main.cpp cmd.cpp
+TEST_DEPENDENCY=test.cpp Entities.cpp cmd.cpp
 GITADDR=../../
 LIB= jsoncpp
 

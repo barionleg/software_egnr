@@ -1,8 +1,4 @@
-#include <iostream>
-#include <json/json.h>
-#include <json/reader.h>
 #include "cmd.h"
-#include "Entities.h"
 using namespace std;
 
 int main(int argc, char const *argv[])
@@ -24,15 +20,16 @@ int main(int argc, char const *argv[])
     string cmd;
     while (getline(ifs,cmd))
     {
-        string res="";
-        if (cmd.compare("players")){
-            res=cmd_players(ofs);
+        if (cmd.compare("players")==0){
+            cmd_players(ofs);
         }
         else if (cmd.find("result")==0){
-            res=cmd_task();
+            cmd.erase(cmd.begin(),cmd.begin()+6);//删命令中的“result”这个子串
+            string task_name=trim(cmd);
+            cmd_result(ofs,task_name);
         }
         else{
-            res="Error\n";
+            cmd_error(ofs);
         }
     }
     return 0;

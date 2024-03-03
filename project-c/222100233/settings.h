@@ -9,3 +9,4 @@
 #ifndef RESULTS_JSON_DIR
     #define RESULTS_JSON_DIR "./datas/results/"
 #endif
+

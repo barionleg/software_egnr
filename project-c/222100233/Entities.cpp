@@ -9,7 +9,7 @@ vector<Player> player_list;
 vector<Task> task_list;
 //可以的话我也不想存那么多映射关系
 map<string,string> event;
-map<string,vector<Score&>> player_score;
+map<string,vector<Score*>> player_score;
 map<string,string> task_player;
 void read_events(){
     ifstream ifs;
@@ -39,7 +39,7 @@ void read_players(){
     }                        
     for (int i = 0; i < root.size(); i++)//循环的是国家
     {
-        auto participants=root[i]["player_score"];
+        auto participants=root[i]["Participations"];
         
         for (int j = 0; j < participants.size(); j++)
         {
@@ -66,8 +66,8 @@ void read_tasks(){
         task_list.push_back(Task(root));
         ifs.close();
     }
-    
-    task_list[1].print();  
+    //for test
+    // task_list[1].print();  
 }
 
 
@@ -114,7 +114,7 @@ Task::Task(Json::Value& task_root){
             this->heats[PRELIMINARY]=heat;
         }
         else
-            std::cerr<<"###heat name unkonwn";
+            std::cerr<<"###heat name unkonwn\n";
     }
 }
 
@@ -153,6 +153,16 @@ void Heat::print(){
     }
 }
 
+void inser_player_scores(string participant_name,Score* score){
+    vector<Score*> player_scores;
+    player_scores.push_back(score);
+    player_score.insert_or_assign(participant_name,player_scores);
+}
+
+void insert_task_player(string player,string task){
+    task_player.insert_or_assign(task,player);
+}
+
 Score::Score(Json::Value& score_json,Heat* parent){
     this->total=std::stod(score_json["TotalPoints"].asString());
     this->parent=parent;
@@ -166,7 +176,7 @@ Score::Score(Json::Value& score_json,Heat* parent){
     this->competitor_name=score_json["FullName"].asString();
     this->rank=score_json["Rank"].asInt();
     //插入全局变量
-    inser_player_scores(this->competitor_name,*this);
+    inser_player_scores(this->competitor_name,this);
     insert_task_player(this->competitor_name,this->parent->parent->name);
 }
 
@@ -178,15 +188,6 @@ void Score::print(){
         std::cout<<score<<' ';
     }
     std::cout<<'\n';
-    std::cout<<'Total Score:'<<this->total<<'\n';    
+    std::cout<<"Total Score:"<<this->total<<'\n';    
 }
 
-void inser_player_scores(string participant_name,Score& score){
-    vector<Score&> player_scores;
-    player_scores.push_back(score);
-    player_score.insert_or_assign(participant_name,player_scores);
-}
-
-void insert_task_player(string player,string task){
-    task_player.insert_or_assign(task,player);
-}
